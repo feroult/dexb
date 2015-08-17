@@ -13,7 +13,10 @@
             planned: 10,
             done: 8,
             added: 2
-        }, ]
+        }, {
+            planned: 10,
+            done: 14
+        }]
     });
 
 })(yawp.fixtures.lazy);
