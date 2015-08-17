@@ -1,33 +1,40 @@
 (function () {
-    var svg = dimple.newSvg("#chartContainer", 840, 400);
-    d3.json("/data/project_1.json", function (data) {
-        var myChart = new dimple.chart(svg, data);
-        myChart.setBounds(60, 30, 710, 305)
-        var x = myChart.addCategoryAxis("x", "sprint");
-        x.title = '';
-        var y = myChart.addMeasureAxis("y", "points");
-        y.showGridlines = false;
-        y.title = '';
-        y.ticks = 2;
+    const LABLE_FONT_COLOR = "#aaa";
+    const LABLE_FONT_SIZE = "12px";
+    
+    function createChart(selector, data, width, height) {
+        var svg = dimple.newSvg(selector, width, height);
+        var chart = new dimple.chart(svg, data);
+        chart.setBounds(60, 30, width - 130, height - 90)
+        return chart;
+    }
 
-        myChart.addSeries(null, dimple.plot.bar);
-        myChart.ease = "sin";
-        myChart.draw(1000);
+    function defaultAxis(axis) {
+        axis.title = '';
+        axis.showGridlines = false;
+        axis.ticks = 4;
+        return axis;
+    }
 
-        // y
+    function draw(chart) {
+        chart.addSeries(null, dimple.plot.bar);
+        chart.ease = "sin";
+        chart.draw(1000);
+    }
+
+    function styleVerticalAxis(axis) {
         var line = d3.svg.line()
             .x(function (d) {
-                console.log('here');
                 return d.x;
             })
             .y(function (d) {
                 return d.y;
             }).interpolate("linear");
 
-        y.shapes.selectAll("text").attr("fill", "#aaa").style("font-size", "10px");
-        y.shapes.selectAll("line").style("stroke", "#aaa");
+        axis.shapes.selectAll("text").attr("fill", LABLE_FONT_COLOR).style("font-size", LABLE_FONT_SIZE);
+        axis.shapes.selectAll("line").style("stroke", LABLE_FONT_COLOR);
 
-        y.shapes.selectAll("path")[0].map(function (d) {
+        axis.shapes.selectAll("path")[0].map(function (d) {
             var rect = d.getBoundingClientRect();
 
             var data = [{
@@ -42,11 +49,38 @@
             d3.select(d).attr("d", line(data));
         });
 
-        y.shapes.selectAll("path").style("stroke", "#aaa").style("stroke-width", 1.5);
+        axis.shapes.selectAll("path").style("stroke", LABLE_FONT_COLOR).style("stroke-width", 1.5);
+    }
 
-        // x
-        x.shapes.selectAll("text").attr("fill", "#aaa").style("font-size", "10px");
-        x.shapes.selectAll("path").remove();
-        x.shapes.selectAll("line").remove();
-    });
+    function styleHorizontalAxis(axis) {
+        axis.shapes.selectAll("text").attr("fill", LABLE_FONT_COLOR).style("font-size", LABLE_FONT_SIZE);
+        axis.shapes.selectAll("path").remove();
+        axis.shapes.selectAll("line").remove();
+    }
+
+    function data(project) {
+        return project.sprints.map(function (sprint, i) {
+            return {
+                sprint: 'Sprint ' + (i + 1),
+                points: sprint.done
+            };
+        });
+    }
+
+    function init() {
+        yawp('/projects').first(function (project) {
+            var chart = createChart("#product-chart", data(project), 840, 400);
+
+            var sprints = defaultAxis(chart.addCategoryAxis("x", "sprint"));
+            var points = defaultAxis(chart.addMeasureAxis("y", "points"));
+
+            draw(chart);
+
+            styleHorizontalAxis(sprints);
+            styleVerticalAxis(points);
+        });
+    }
+
+    init();
+    
 })();
