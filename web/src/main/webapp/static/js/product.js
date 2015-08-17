@@ -1,6 +1,6 @@
 (function () {
     var svg = dimple.newSvg("#chartContainer", 840, 400);
-    d3.json("../data/project_1.json", function (data) {
+    d3.json("/data/project_1.json", function (data) {
         var myChart = new dimple.chart(svg, data);
         myChart.setBounds(60, 30, 710, 305)
         var x = myChart.addCategoryAxis("x", "sprint");
