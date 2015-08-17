@@ -1,6 +1,6 @@
 (function () {
-    const LABLE_FONT_COLOR = "#aaa";
-    const LABLE_FONT_SIZE = "12px";
+    const LABEL_FONT_COLOR = "#aaa";
+    const LABEL_FONT_SIZE = "12px";
     
     function createChart(selector, data, width, height) {
         var svg = dimple.newSvg(selector, width, height);
@@ -31,8 +31,8 @@
                 return d.y;
             }).interpolate("linear");
 
-        axis.shapes.selectAll("text").attr("fill", LABLE_FONT_COLOR).style("font-size", LABLE_FONT_SIZE);
-        axis.shapes.selectAll("line").style("stroke", LABLE_FONT_COLOR);
+        axis.shapes.selectAll("text").attr("fill", LABEL_FONT_COLOR).style("font-size", LABEL_FONT_SIZE);
+        axis.shapes.selectAll("line").style("stroke", LABEL_FONT_COLOR);
 
         axis.shapes.selectAll("path")[0].map(function (d) {
             var rect = d.getBoundingClientRect();
@@ -49,11 +49,11 @@
             d3.select(d).attr("d", line(data));
         });
 
-        axis.shapes.selectAll("path").style("stroke", LABLE_FONT_COLOR).style("stroke-width", 1.5);
+        axis.shapes.selectAll("path").style("stroke", LABEL_FONT_COLOR).style("stroke-width", 1.5);
     }
 
     function styleHorizontalAxis(axis) {
-        axis.shapes.selectAll("text").attr("fill", LABLE_FONT_COLOR).style("font-size", LABLE_FONT_SIZE);
+        axis.shapes.selectAll("text").attr("fill", LABEL_FONT_COLOR).style("font-size", LABEL_FONT_SIZE);
         axis.shapes.selectAll("path").remove();
         axis.shapes.selectAll("line").remove();
     }
