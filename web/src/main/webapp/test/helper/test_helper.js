@@ -8,7 +8,7 @@
 		c.baseUrl('/fixtures');
 		c.resetUrl('/fixtures/delete_all');
 
-		c.bind('person', '/people');
+		c.bind('project', '/projects');
 	});
 
 	function moduledef(module, options) {
