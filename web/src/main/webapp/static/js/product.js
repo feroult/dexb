@@ -1,9 +1,11 @@
 (function () {
     const LABEL_FONT_COLOR = "#aaa";
     const LABEL_FONT_SIZE = "12px";
-    
+
+    var svg = null;
+
     function createChart(selector, data, width, height) {
-        var svg = dimple.newSvg(selector, width, height);
+        svg = dimple.newSvg(selector, width, height);
         var chart = new dimple.chart(svg, data);
         chart.setBounds(60, 30, width - 130, height - 90)
         return chart;
@@ -14,12 +16,6 @@
         axis.showGridlines = false;
         axis.ticks = 4;
         return axis;
-    }
-
-    function draw(chart) {
-        chart.addSeries(null, dimple.plot.bar);
-        chart.ease = "sin";
-        chart.draw(1000);
     }
 
     function styleVerticalAxis(axis) {
@@ -59,28 +55,71 @@
     }
 
     function data(project) {
+        var remaining = project.points;
+
         return project.sprints.map(function (sprint, i) {
+            remaining -= sprint.done;
             return {
+                index: i,
                 sprint: 'Sprint ' + (i + 1),
-                points: sprint.done
+                points: sprint.done,
+                remaining: remaining
             };
         });
+    }
+
+    function draw(chart) {
+        chart.ease = "sin";
+        chart.draw(1000);
+    }
+
+    function xpto(chart, axis) {
+        var y = axis._scale(98);
+
+
+        axis.shapes.selectAll("path")[0].map(function (d) {
+            var rect = d.getBoundingClientRect();
+
+
+            svg.append("circle")
+                .attr("cx", rect.left - 2)
+                .attr("cy", y)
+                .attr("r", 5)
+                .style("stroke", "#fff")
+                .style("fill", "#6b94b0")
+                .style("stroke-width", "2px");
+        });
+
     }
 
     function init() {
         yawp('/projects').first(function (project) {
             var chart = createChart("#product-chart", data(project), 840, 400);
 
-            var sprints = defaultAxis(chart.addCategoryAxis("x", "sprint"));
+            // axis
+            var sprints = defaultAxis(chart.addCategoryAxis("x", "index"));
+            var remaining = defaultAxis(chart.addMeasureAxis("y", "remaining"));
             var points = defaultAxis(chart.addMeasureAxis("y", "points"));
 
+
+            // series
+            chart.addSeries(null, dimple.plot.bar, [sprints, points]);
+            var remainingSeries = chart.addSeries(null, dimple.plot.line, [sprints, remaining]);
+            remainingSeries.lineMarkers = true;
+            //remainingSeries.interpolation = "step-after";
+
+            // draw
             draw(chart);
 
+            xpto(chart, remaining);
+
+            // style
             styleHorizontalAxis(sprints);
+            styleVerticalAxis(remaining);
             styleVerticalAxis(points);
         });
     }
 
     init();
-    
+
 })();
