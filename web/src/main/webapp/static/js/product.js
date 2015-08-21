@@ -1,42 +1,5 @@
 (function () {
 
-    function data(project) {
-        var remaining = project.points;
-
-        return project.sprints.map(function (sprint, i) {
-            remaining -= sprint.done;
-            return {
-                sprint: 'Sprint ' + (i + 1),
-                points: sprint.done,
-                remaining: remaining
-            };
-        });
-    }
-
-    function defineChartDimentions(width, height) {
-        var margin = {
-            top: 80,
-            right: 80,
-            bottom: 80,
-            left: 80
-        };
-
-        return {
-            width: width - margin.left - margin.right,
-            height: height - margin.top - margin.bottom,
-            margin: margin
-        }
-    }
-
-    function createChartSVG(dim) {
-        return d3.select("#product-chart").append("svg")
-            .attr("width", dim.width + dim.margin.left + dim.margin.right)
-            .attr("height", dim.height + dim.margin.top + dim.margin.bottom)
-            .append("g")
-            .attr("class", "graph")
-            .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
-    }
-
     function productChart(width, height) {
         var dim = defineChartDimentions(width, height);
         var svg = createChartSVG(dim);
@@ -47,9 +10,17 @@
     }
 
     function renderChart(dim, svg, project, data) {
+        function render() {
+            var x = createX();
+            var y0 = createY0();
+            var y1 = createY1();
+
+            createBars(x, y0);
+        }
+
         function createX() {
             var x = d3.scale.ordinal()
-                .rangeRoundBands([0, dim.width], .3)
+                .rangeRoundBands([0, dim.width], 0.15)
                 .domain(data.map(function (d) {
                     return d.sprint;
                 }));
@@ -97,7 +68,7 @@
 
             var yAxisRight = d3.svg.axis()
                 .scale(y1)
-                .ticks(6)
+                .ticks(4)
                 .outerTickSize(0)
                 .orient("right");
 
@@ -137,17 +108,46 @@
             return bars;
         }
 
-        function render() {
-            var x = createX();
-            var y0 = createY0();
-            var y1 = createY1();
-
-            createBars(x, y0);
-        }
-
         render();
     }
 
-    productChart(800, 400);
+    function data(project) {
+        var remaining = project.points;
+
+        return project.sprints.map(function (sprint, i) {
+            remaining -= sprint.done;
+            return {
+                sprint: 'Sprint ' + (i + 1),
+                points: sprint.done,
+                remaining: remaining
+            };
+        });
+    }
+
+    function defineChartDimentions(width, height) {
+        var margin = {
+            top: 80,
+            right: 80,
+            bottom: 80,
+            left: 80
+        };
+
+        return {
+            width: width - margin.left - margin.right,
+            height: height - margin.top - margin.bottom,
+            margin: margin
+        }
+    }
+
+    function createChartSVG(dim) {
+        return d3.select("#product-chart").append("svg")
+            .attr("width", dim.width + dim.margin.left + dim.margin.right)
+            .attr("height", dim.height + dim.margin.top + dim.margin.bottom)
+            .append("g")
+            .attr("class", "graph")
+            .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
+    }
+
+    productChart(600, 400);
 
 })();
