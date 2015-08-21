@@ -60,7 +60,6 @@
         return project.sprints.map(function (sprint, i) {
             remaining -= sprint.done;
             return {
-                index: i,
                 sprint: 'Sprint ' + (i + 1),
                 points: sprint.done,
                 remaining: remaining
@@ -69,8 +68,9 @@
     }
 
     function draw(chart) {
-        chart.ease = "sin";
-        chart.draw(1000);
+        //        chart.ease = "sin";
+        //        chart.draw(1000);
+        chart.draw();
     }
 
     function xpto(chart, axis) {
@@ -97,7 +97,7 @@
             var chart = createChart("#product-chart", data(project), 840, 400);
 
             // axis
-            var sprints = defaultAxis(chart.addCategoryAxis("x", "index"));
+            var sprints = defaultAxis(chart.addCategoryAxis("x", "sprint"));
             var remaining = defaultAxis(chart.addMeasureAxis("y", "remaining"));
             var points = defaultAxis(chart.addMeasureAxis("y", "points"));
 
