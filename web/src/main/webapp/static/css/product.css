@@ -1,9 +1,6 @@
-.chart {
-    font: 10px sans-serif;
-}
-
 .chart text {
     fill: #aaa;
+    font: 10px sans-serif;
 }
 
 .y.axis line {
