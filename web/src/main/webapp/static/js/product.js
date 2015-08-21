@@ -1,125 +1,125 @@
 (function () {
-    const LABEL_FONT_COLOR = "#aaa";
-    const LABEL_FONT_SIZE = "12px";
 
-    var svg = null;
+    function productChart(_width, _height) {
 
-    function createChart(selector, data, width, height) {
-        svg = dimple.newSvg(selector, width, height);
-        var chart = new dimple.chart(svg, data);
-        chart.setBounds(60, 30, width - 130, height - 90)
-        return chart;
-    }
+        var margin = {
+                top: 80,
+                right: 80,
+                bottom: 80,
+                left: 80
+            },
+            width = _width - margin.left - margin.right,
+            height = _height - margin.top - margin.bottom;
 
-    function defaultAxis(axis) {
-        axis.title = '';
-        axis.showGridlines = false;
-        axis.ticks = 4;
-        return axis;
-    }
+        var x = d3.scale.ordinal()
+            .rangeRoundBands([0, width], .1);
 
-    function styleVerticalAxis(axis) {
-        var line = d3.svg.line()
-            .x(function (d) {
-                return d.x;
-            })
-            .y(function (d) {
-                return d.y;
-            }).interpolate("linear");
+        var y0 = d3.scale.linear().domain([300, 1100]).range([height, 0]),
+            y1 = d3.scale.linear().domain([20, 80]).range([height, 0]);
 
-        axis.shapes.selectAll("text").attr("fill", LABEL_FONT_COLOR).style("font-size", LABEL_FONT_SIZE);
-        axis.shapes.selectAll("line").style("stroke", LABEL_FONT_COLOR);
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
 
-        axis.shapes.selectAll("path")[0].map(function (d) {
-            var rect = d.getBoundingClientRect();
+        // create left yAxis
+        var yAxisLeft = d3.svg.axis().scale(y0).ticks(4).orient("left");
+        // create right yAxis
+        var yAxisRight = d3.svg.axis().scale(y1).ticks(6).orient("right");
 
-            var data = [{
-                "x": 0,
-                "y": rect.top - 20
-                    }, {
-                "x": 0,
-                "y": rect.bottom
-                    }];
+        var svg = d3.select("#product-chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("class", "graph")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+        d3.tsv("data/product.tsv", type, function (error, data) {
+            x.domain(data.map(function (d) {
+                return d.year;
+            }));
+            y0.domain([0, d3.max(data, function (d) {
+                return d.money;
+            })]);
 
-            d3.select(d).attr("d", line(data));
-        });
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
 
-        axis.shapes.selectAll("path").style("stroke", LABEL_FONT_COLOR).style("stroke-width", 1.5);
-    }
+            svg.append("g")
+                .attr("class", "y axis axisLeft")
+                .attr("transform", "translate(0,0)")
+                .call(yAxisLeft)
+                .append("text")
+                .attr("y", 6)
+                .attr("dy", "-2em")
+                .style("text-anchor", "end")
+                .text("Dollars");
 
-    function styleHorizontalAxis(axis) {
-        axis.shapes.selectAll("text").attr("fill", LABEL_FONT_COLOR).style("font-size", LABEL_FONT_SIZE);
-        axis.shapes.selectAll("path").remove();
-        axis.shapes.selectAll("line").remove();
-    }
+            svg.append("g")
+                .attr("class", "y axis axisRight")
+                .attr("transform", "translate(" + (width) + ",0)")
+                .call(yAxisRight)
+                .append("text")
+                .attr("y", 6)
+                .attr("dy", "-2em")
+                .attr("dx", "2em")
+                .style("text-anchor", "end")
+                .text("#");
 
-    function data(project) {
-        var remaining = project.points;
+            bars = svg.selectAll(".bar").data(data).enter();
 
-        return project.sprints.map(function (sprint, i) {
-            remaining -= sprint.done;
-            return {
-                sprint: 'Sprint ' + (i + 1),
-                points: sprint.done,
-                remaining: remaining
-            };
-        });
-    }
+            bars.append("rect")
+                .attr("class", "bar1")
+                .attr("x", function (d) {
+                    return x(d.year);
+                })
+                .attr("width", x.rangeBand() / 2)
 
-    function draw(chart) {
-        //        chart.ease = "sin";
-        //        chart.draw(1000);
-        chart.draw();
-    }
+            .attr("y", 0)
+                .attr("height", height)
 
-    function xpto(chart, axis) {
-        var y = axis._scale(98);
+            .transition()
+                .delay(function (d, i) {
+                    return i * 100;
+                })
 
+            .attr("y", function (d) {
+                    return y0(d.money);
+                })
+                .attr("height", function (d, i, j) {
+                    return height - y0(d.money);
+                });
 
-        axis.shapes.selectAll("path")[0].map(function (d) {
-            var rect = d.getBoundingClientRect();
+            bars.append("rect")
+                .attr("class", "bar2")
+                .attr("x", function (d) {
+                    return x(d.year) + x.rangeBand() / 2;
+                })
+                .attr("width", x.rangeBand() / 2)
 
+            .attr("y", height)
+                .attr("height", 0)
 
-            svg.append("circle")
-                .attr("cx", rect.left - 2)
-                .attr("cy", y)
-                .attr("r", 5)
-                .style("stroke", "#fff")
-                .style("fill", "#6b94b0")
-                .style("stroke-width", "2px");
-        });
+            .transition()
+                .delay(function (d, i) {
+                    return i * 100;
+                })
 
-    }
+            .attr("y", function (d) {
+                    return y1(d.number);
+                })
+                .attr("height", function (d, i, j) {
+                    return height - y1(d.number);
+                });
 
-    function init() {
-        yawp('/projects').first(function (project) {
-            var chart = createChart("#product-chart", data(project), 840, 400);
-
-            // axis
-            var sprints = defaultAxis(chart.addCategoryAxis("x", "sprint"));
-            var remaining = defaultAxis(chart.addMeasureAxis("y", "remaining"));
-            var points = defaultAxis(chart.addMeasureAxis("y", "points"));
-
-
-            // series
-            chart.addSeries(null, dimple.plot.bar, [sprints, points]);
-            var remainingSeries = chart.addSeries(null, dimple.plot.line, [sprints, remaining]);
-            remainingSeries.lineMarkers = true;
-            //remainingSeries.interpolation = "step-after";
-
-            // draw
-            draw(chart);
-
-            xpto(chart, remaining);
-
-            // style
-            styleHorizontalAxis(sprints);
-            styleVerticalAxis(remaining);
-            styleVerticalAxis(points);
         });
     }
 
-    init();
+    function type(d) {
+        d.money = +d.money;
+        return d;
+    }
 
+    productChart(400, 400);
 })();
