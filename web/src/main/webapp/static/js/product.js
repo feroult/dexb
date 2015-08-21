@@ -15,7 +15,7 @@
             var y0 = createY0();
             var y1 = createY1();
 
-            createBars(x, y0);
+            createBars(x, y1);
         }
 
         function createX() {
@@ -61,14 +61,14 @@
         function createY1() {
             var min = 0;
             var max = d3.max(data, function (d) {
-                return d.points;
+                return d.done;
             });
 
             var y1 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
             var yAxisRight = d3.svg.axis()
                 .scale(y1)
-                .ticks(4)
+                .ticks(8)
                 .outerTickSize(0)
                 .orient("right");
 
@@ -80,7 +80,7 @@
             return y1;
         }
 
-        function createBars(x, y0) {
+        function createBars(x, y1) {
             var bars = svg.selectAll(".bar").data(data).enter();
 
             bars.append("rect")
@@ -99,10 +99,10 @@
                 })
 
             .attr("y", function (d) {
-                    return y0(d.remaining);
+                    return y1(d.done);
                 })
                 .attr("height", function (d, i, j) {
-                    return dim.height - y0(d.remaining);
+                    return dim.height - y1(d.done);
                 });
 
             return bars;
@@ -118,7 +118,7 @@
             remaining -= sprint.done;
             return {
                 sprint: 'Sprint ' + (i + 1),
-                points: sprint.done,
+                done: sprint.done,
                 remaining: remaining
             };
         });
