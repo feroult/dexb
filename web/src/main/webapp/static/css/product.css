@@ -32,6 +32,11 @@
     fill: steelblue;
 }
 
+.line {
+    stroke: green;
+    stroke-width: 2px;
+}
+
 .x.axis path {
     display: none;
 }

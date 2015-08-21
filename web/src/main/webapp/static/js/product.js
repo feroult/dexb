@@ -15,7 +15,8 @@
             var y0 = createY0();
             var y1 = createY1();
 
-            createBars(x, y1);
+            renderBars(x, y1);
+            renderLines(x, y0);
         }
 
         function createX() {
@@ -80,7 +81,36 @@
             return y1;
         }
 
-        function createBars(x, y1) {
+        function renderLines(x, y0) {
+            var lines = svg.selectAll(".line").data(data).enter();
+
+            lines.append("line")
+                .attr("class", "line")
+                .attr("x1", function (d) {
+                    if (d.index == 0) {
+                        return 0;
+                    }
+                    return x(data[d.index - 1].sprint) + x.rangeBand() / 2;
+                })
+                .attr("y1", function (d) {
+                    if (d.index == 0) {
+                        return y0(project.points);
+                    }
+
+                    return y0(data[d.index - 1].remaining);
+                })
+                .attr("x2", function (d) {
+                    return x(d.sprint) + x.rangeBand() / 2;
+                })
+                .attr("y2", function (d) {
+                    return y0(d.remaining);
+                });
+
+            return lines;
+        }
+
+
+        function renderBars(x, y1) {
             var bars = svg.selectAll(".bar").data(data).enter();
 
             bars.append("rect")
@@ -117,6 +147,7 @@
         return project.sprints.map(function (sprint, i) {
             remaining -= sprint.done;
             return {
+                index: i,
                 sprint: 'Sprint ' + (i + 1),
                 done: sprint.done,
                 remaining: remaining
