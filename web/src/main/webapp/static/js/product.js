@@ -1,18 +1,18 @@
 (function () {
 
-    function productChart(width, height) {
-        var dim = defineChartDimentions(width, height);
-        var svg = createChartSVG(dim);
+    function data(project) {
+        var remaining = project.points;
 
-        d3.tsv("data/product.tsv", type, function (error, data) {
-            var x = createX(dim, svg, data);
-            var y0 = createY0(dim, svg, data);
-            var y1 = createY1(dim, svg, data);
-
-            createBars(dim, svg, data, x, y0);
+        return project.sprints.map(function (sprint, i) {
+            remaining -= sprint.done;
+            return {
+                sprint: 'Sprint ' + (i + 1),
+                points: sprint.done,
+                remaining: remaining
+            };
         });
     }
-    
+
     function defineChartDimentions(width, height) {
         var margin = {
             top: 80,
@@ -37,94 +37,115 @@
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    function createX(dim, svg, data) {
-        var x = d3.scale.ordinal()
-            .rangeRoundBands([0, dim.width], .3)
-            .domain(data.map(function (d) {
-                return d.year;
-            }));
+    function productChart(width, height) {
+        var dim = defineChartDimentions(width, height);
+        var svg = createChartSVG(dim);
 
-        var xAxis = d3.svg.axis()
-            .tickSize(0)
-            .scale(x)
-            .orient("bottom");
-
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + (dim.height + 6) + ")")
-            .call(xAxis);
-
-        return x;
+        yawp('/projects').first(function (project) {
+            renderChart(dim, svg, project, data(project));
+        });
     }
 
-    function createY0(dim, svg, data) {
-        var y0 = d3.scale.linear().domain([300, 1100]).range([dim.height, 0])
-            .domain([0, d3.max(data, function (d) {
-                return d.money;
-            })]);
+    function renderChart(dim, svg, project, data) {
+        function createX() {
+            var x = d3.scale.ordinal()
+                .rangeRoundBands([0, dim.width], .3)
+                .domain(data.map(function (d) {
+                    return d.sprint;
+                }));
 
-        var yAxisLeft = d3.svg.axis()
-            .scale(y0)
-            .ticks(4)
-            .outerTickSize(0)
-            .orient("left");
+            var xAxis = d3.svg.axis()
+                .tickSize(0)
+                .scale(x)
+                .orient("bottom");
 
-        svg.append("g")
-            .attr("class", "y axis axisLeft")
-            .attr("transform", "translate(0,0)")
-            .call(yAxisLeft);
+            svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + (dim.height + 6) + ")")
+                .call(xAxis);
 
-        return y0;
-    }
+            return x;
+        }
 
-    function createY1(dim, svg, data) {
-        var y1 = d3.scale.linear().domain([20, 80]).range([dim.height, 0]);
+        function createY0() {
+            var min = 0;
+            var max = project.points;
 
-        var yAxisRight = d3.svg.axis()
-            .scale(y1)
-            .ticks(6)
-            .outerTickSize(0)
-            .orient("right");
+            var y0 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
-        svg.append("g")
-            .attr("class", "y axis axisRight")
-            .attr("transform", "translate(" + (dim.width) + ",0)")
-            .call(yAxisRight);
+            var yAxisLeft = d3.svg.axis()
+                .scale(y0)
+                .ticks(4)
+                .outerTickSize(0)
+                .orient("left");
 
-        return y1;
-    }
+            svg.append("g")
+                .attr("class", "y axis axisLeft")
+                .attr("transform", "translate(0,0)")
+                .call(yAxisLeft);
 
-    function createBars(dim, svg, data, x, y0) {
-        var bars = svg.selectAll(".bar").data(data).enter();
+            return y0;
+        }
 
-        bars.append("rect")
-            .attr("class", "bar")
-            .attr("x", function (d) {
-                return x(d.year);
-            })
-            .attr("width", x.rangeBand())
-
-        .attr("y", dim.height)
-            .attr("height", 0)
-
-        .transition()
-            .delay(function (d, i) {
-                return i * 100;
-            })
-
-        .attr("y", function (d) {
-                return y0(d.money);
-            })
-            .attr("height", function (d, i, j) {
-                return dim.height - y0(d.money);
+        function createY1() {
+            var min = 0;
+            var max = d3.max(data, function (d) {
+                return d.points;
             });
 
-        return bars;
-    }
+            var y1 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
-    function type(d) {
-        d.money = +d.money;
-        return d;
+            var yAxisRight = d3.svg.axis()
+                .scale(y1)
+                .ticks(6)
+                .outerTickSize(0)
+                .orient("right");
+
+            svg.append("g")
+                .attr("class", "y axis axisRight")
+                .attr("transform", "translate(" + (dim.width) + ",0)")
+                .call(yAxisRight);
+
+            return y1;
+        }
+
+        function createBars(x, y0) {
+            var bars = svg.selectAll(".bar").data(data).enter();
+
+            bars.append("rect")
+                .attr("class", "bar")
+                .attr("x", function (d) {
+                    return x(d.sprint);
+                })
+                .attr("width", x.rangeBand())
+
+            .attr("y", dim.height)
+                .attr("height", 0)
+
+            .transition()
+                .delay(function (d, i) {
+                    return i * 100;
+                })
+
+            .attr("y", function (d) {
+                    return y0(d.remaining);
+                })
+                .attr("height", function (d, i, j) {
+                    return dim.height - y0(d.remaining);
+                });
+
+            return bars;
+        }
+
+        function render() {
+            var x = createX();
+            var y0 = createY0();
+            var y1 = createY1();
+
+            createBars(x, y0);
+        }
+
+        render();
     }
 
     productChart(800, 400);
