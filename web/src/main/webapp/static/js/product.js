@@ -204,7 +204,7 @@
     function data(project) {
         var remaining = project.points;
 
-        return project.sprints.map(function (sprint, i) {
+        var data = project.sprints.map(function (sprint, i) {
             remaining -= sprint.done;
             return {
                 index: i,
@@ -213,6 +213,28 @@
                 remaining: remaining
             };
         });
+
+        var mean = d3.mean(data, function (d) {
+            return d.done;
+        });
+
+
+        do {
+            remaining -= mean;
+            if (remaining < 0) {
+                remaining = 0;
+            }
+
+            data.push({
+                index: data.length,
+                sprint: 'Sprint ' + (data.length + 1),
+                done: 0,
+                remaining: remaining
+            });
+
+        } while (remaining != 0);
+
+        return data;
     }
 
     function defineChartDimentions(width, height) {
@@ -233,12 +255,13 @@
     function createChartSVG(dim) {
         return d3.select("#product-chart").append("svg")
             .attr("width", dim.width + dim.margin.left + dim.margin.right)
+            .attr("width", "100%")
             .attr("height", dim.height + dim.margin.top + dim.margin.bottom)
             .append("g")
             .attr("class", "graph")
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(800, 500);
+    productChart(1400, 500);
 
 })();
