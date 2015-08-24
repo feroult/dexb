@@ -15,13 +15,13 @@
             var y0 = createY0();
             var y1 = createY1();
 
-            renderBars(x, y1);
-            renderLines(x, y0);
+            renderDoneBars(x, y1);
+            renderProductBurnLines(x, y0);
         }
 
         function createX() {
             var x = d3.scale.ordinal()
-                .rangeRoundBands([0, dim.width], 0.15)
+                .rangeRoundBands([0, dim.width], 0.3)
                 .domain(data.map(function (d) {
                     return d.sprint;
                 }));
@@ -63,7 +63,7 @@
             var min = 0;
             var max = d3.max(data, function (d) {
                 return d.done;
-            });
+            }) * 1.5;
 
             var y1 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
@@ -81,36 +81,97 @@
             return y1;
         }
 
-        function renderLines(x, y0) {
+        function renderProductBurnLines(x, y0) {
+            var dotOffset = 4;
+
             var lines = svg.selectAll(".line").data(data).enter();
+
+            function x1(d) {
+                if (d.index == 0) {
+                    return 0;
+                }
+                return x(data[d.index - 1].sprint) + x.rangeBand() / 2;
+            }
+
+            function y1(d) {
+                if (d.index == 0) {
+                    return y0(project.points);
+                }
+
+                return y0(data[d.index - 1].remaining);
+            }
+
+            function x2(d) {
+                return x(d.sprint) + x.rangeBand() / 2;
+
+            }
+
+            function y2(d) {
+                return y0(d.remaining);
+            }
 
             lines.append("line")
                 .attr("class", "line")
                 .attr("x1", function (d) {
-                    if (d.index == 0) {
-                        return 0;
-                    }
-                    return x(data[d.index - 1].sprint) + x.rangeBand() / 2;
-                })
-                .attr("y1", function (d) {
-                    if (d.index == 0) {
-                        return y0(project.points);
-                    }
-
-                    return y0(data[d.index - 1].remaining);
+                    return x1(d) + dotOffset;
                 })
                 .attr("x2", function (d) {
-                    return x(d.sprint) + x.rangeBand() / 2;
+                    return x2(d) - dotOffset;
+                })
+                .attr("y1", 0)
+                .attr("y2", 0)
+                .transition()
+                .ease("sin")
+                .delay(function (d, i) {
+                    return i * 100;
+                })
+                .attr("y1", function (d) {
+                    var slope = (y2(d) - y1(d)) / (x2(d) - x1(d));
+                    var x1_ = x1(d) + dotOffset;
+                    var y1_ = y2(d) - slope * (x2(d) - x1_);
+                    return y1_;
                 })
                 .attr("y2", function (d) {
+                    var slope = (y2(d) - y1(d)) / (x2(d) - x1(d));
+                    var x2_ = x2(d) - dotOffset;
+                    var y2_ = slope * (x2_ - x1(d)) + y1(d);
+                    return y2_;
+                });
+
+
+            var data_ = data.map(function (d) {
+                return d;
+            });
+
+            data_.unshift({
+                remaining: project.points
+            });
+
+            var dots = svg.selectAll(".dot").data(data_).enter();
+
+            dots.append("circle")
+                .attr("class", "circle")
+                .attr("r", 3)
+                .attr("cx", function (d) {
+                    if (!d.sprint) {
+                        return 0;
+                    }
+                    return x(d.sprint) + x.rangeBand() / 2;
+                })
+                .attr("cy", 0)
+                .transition()
+                .ease("sin")
+                .delay(function (d, i) {
+                    return i * 60;
+                })
+                .attr("cy", function (d) {
                     return y0(d.remaining);
                 });
 
             return lines;
         }
 
-
-        function renderBars(x, y1) {
+        function renderDoneBars(x, y1) {
             var bars = svg.selectAll(".bar").data(data).enter();
 
             bars.append("rect")
@@ -119,16 +180,15 @@
                     return x(d.sprint);
                 })
                 .attr("width", x.rangeBand())
-
-            .attr("y", dim.height)
+                .attr("y", dim.height)
                 .attr("height", 0)
-
-            .transition()
+                .transition()
+                .ease("linear")
                 .delay(function (d, i) {
                     return i * 100;
                 })
-
-            .attr("y", function (d) {
+                .duration(500)
+                .attr("y", function (d) {
                     return y1(d.done);
                 })
                 .attr("height", function (d, i, j) {
@@ -179,6 +239,6 @@
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(600, 400);
+    productChart(800, 500);
 
 })();

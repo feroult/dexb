@@ -21,20 +21,28 @@
 }
 
 .axisLeft path {
-    stroke: green;
+    stroke: #1d7fb3;
 }
 
 .axisRight path {
-    stroke: steelblue;
+    stroke: #1db34f;
 }
 
 .bar {
-    fill: steelblue;
+    fill: #1db34f;
 }
 
 .line {
-    stroke: green;
+    stroke: #1d7fb3;
     stroke-width: 2px;
+    stroke-linecap: "butt";
+}
+
+.circle {
+    fill: #1d7fb3;
+    stroke: white;
+    stroke-opacity: 0;
+    stroke-width: 0px;
 }
 
 .x.axis path {
