@@ -15,6 +15,7 @@
             var y0 = createY0();
             var y1 = createY1();
 
+            renderScopeArea(x, y0);
             renderDoneBars(x, y1);
             renderProductBurnLines(x, y0);
         }
@@ -41,7 +42,9 @@
 
         function createY0() {
             var min = 0;
-            var max = project.points;
+            var max = d3.max(data, function (d) {
+                return d.points;
+            });
 
             var y0 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
@@ -111,7 +114,12 @@
             }
 
             lines.append("line")
-                .attr("class", "line")
+                .attr("class", function (d) {
+                    if (d.projection) {
+                        return "line projection";
+                    }
+                    return "line";
+                })
                 .attr("x1", function (d) {
                     return x1(d) + dotOffset;
                 })
@@ -198,19 +206,48 @@
             return bars;
         }
 
+        function renderScopeArea(x, y0) {
+            var area = d3.svg.area()
+                .x(function (d) {
+                    if (d.index == 0) {
+                        return 0;
+                    }
+                    if (d.index == data.length - 1) {
+                        return dim.width;
+                    }
+                    return x(d.sprint);
+                })
+                .y0(dim.height)
+                .y1(function (d) {
+                    return y0(d.points);
+                });
+
+            svg.append("path")
+                .datum(data)
+                .attr("class", "area")
+                .attr("d", area);
+        }
+
         render();
     }
 
+
+
     function data(project) {
         var remaining = project.points;
+        var points = project.points;
 
         var data = project.sprints.map(function (sprint, i) {
             remaining -= sprint.done;
+            points += sprint.added ? sprint.added : 0;
+            points -= sprint.removed ? sprint.removed : 0;
+
             return {
                 index: i,
                 sprint: 'Sprint ' + (i + 1),
                 done: sprint.done,
-                remaining: remaining
+                remaining: remaining,
+                points: points
             };
         });
 
@@ -229,7 +266,9 @@
                 index: data.length,
                 sprint: 'Sprint ' + (data.length + 1),
                 done: 0,
-                remaining: remaining
+                remaining: remaining,
+                points: points,
+                projection: true
             });
 
         } while (remaining != 0);
