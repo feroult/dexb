@@ -50,12 +50,9 @@
     stroke-width: 0px;
 }
 
-.area {
-    fill: #1d7fb3;
+.scope {
+    fill: green;
     fill-opacity: 0.1;
-/*    opacity: 0.1;*/
-    stroke: #1d7fb3;
-    stroke-width: 2px;
 }
 
 .x.axis path {

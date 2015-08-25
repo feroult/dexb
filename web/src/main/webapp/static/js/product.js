@@ -216,16 +216,60 @@
                         return dim.width;
                     }
                     return x(d.sprint);
+                }).y0(function (d) {
+                    return y0(d.y0);
                 })
-                .y0(dim.height)
                 .y1(function (d) {
-                    return y0(d.points);
+                    return y0(d.y0 + d.y);
                 });
 
-            svg.append("path")
-                .datum(data)
-                .attr("class", "area")
-                .attr("d", area);
+            var stack = d3.layout.stack()
+                .values(function (d) {
+                    return d.values;
+                });
+
+
+            var data_ = data.map(function (d) {
+                return d;
+            });
+
+            var data0 = stack([{
+                values: data_.map(function (d) {
+                    return {
+                        index: d.index,
+                        sprint: d.sprint,
+                        y: 0
+                    };
+                })
+            }]);
+
+            var data1 = stack([{
+                values: data_.map(function (d) {
+                    return {
+                        index: d.index,
+                        sprint: d.sprint,
+                        y: d.points
+                    };
+                })
+            }]);
+
+
+            var scope = svg.selectAll(".scope").data(data).enter();
+
+            scope.append("path")
+                .data(data0)
+                .attr("class", "scope")
+                .attr("d", function (d) {
+                    return area(d.values);
+                });
+
+            d3.selectAll(".scope")
+                .data(data1)
+                .transition()
+                .duration(2000)
+                .attr("d", function (d) {
+                    return area(d.values);
+                });
         }
 
         render();

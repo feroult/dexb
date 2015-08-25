@@ -17,13 +17,6 @@
             done: 6,
             added: 2
         }, {
-            planned: 10,
-            done: 14
-        }, {
-            planned: 10,
-            done: 6,
-            added: 2
-        }, {
             planned: 14,
             done: 8,
             added: 2
