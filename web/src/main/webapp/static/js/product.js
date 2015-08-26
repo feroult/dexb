@@ -5,7 +5,7 @@
         var svg = createChartSVG(dim);
 
         yawp('/projects').first(function (project) {
-            renderChart(dim, svg, project, data(project));
+            renderChart(dim, svg, project, prepareData(project));
         });
     }
 
@@ -278,8 +278,14 @@
                 return d.totalDone;
             });
 
+            var outStack = scopeStack(stack, data, function (d) {
+                return d.totalOut;
+            });
+
+
             renderScopeStack(emptyStack, pointsStack, "scopePoints");
             renderScopeStack(emptyStack, doneStack, "scopeDone");
+            renderScopeStack(emptyStack, outStack, "scopeOut");
         }
 
         render();
@@ -287,10 +293,11 @@
 
 
 
-    function data(project) {
+    function prepareData(project) {
         var remaining = project.points;
         var points = project.points;
         var totalDone = 0;
+        var totalOut = 0;
 
         var data = project.sprints.map(function (sprint, i) {
             var added = sprint.added ? sprint.added : 0;
@@ -306,7 +313,8 @@
                 done: sprint.done,
                 remaining: remaining,
                 points: points,
-                totalDone: totalDone
+                totalDone: totalDone,
+                totalOut: 0
             };
         });
 
@@ -321,6 +329,10 @@
                 remaining = 0;
             }
 
+            if (data.length > 8) {
+                totalOut += mean;
+            }
+
             data.push({
                 index: data.length,
                 sprint: 'Sprint ' + (data.length + 1),
@@ -328,7 +340,8 @@
                 remaining: remaining,
                 points: points,
                 projection: true,
-                totalDone: totalDone
+                totalDone: totalDone,
+                totalOut
             });
 
         } while (remaining != 0);

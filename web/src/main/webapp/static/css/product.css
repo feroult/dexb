@@ -60,6 +60,11 @@
     fill-opacity: 0.2;
 }
 
+.scopeOut {
+    fill: red;
+    fill-opacity: 0.2;
+}
+
 .x.axis path {
     display: none;
 }
