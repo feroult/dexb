@@ -207,69 +207,79 @@
         }
 
         function renderScopeArea(x, y0) {
-            var area = d3.svg.area()
-                .x(function (d) {
-                    if (d.index == 0) {
-                        return 0;
-                    }
-                    if (d.index == data.length - 1) {
-                        return dim.width;
-                    }
-                    return x(d.sprint);
-                }).y0(function (d) {
-                    return y0(d.y0);
-                })
-                .y1(function (d) {
-                    return y0(d.y0 + d.y);
-                });
+            function createArea() {
+                return d3.svg.area()
+                    .x(function (d) {
+                        if (d.index == 0) {
+                            return 0;
+                        }
+                        if (d.index == data.length - 1) {
+                            return dim.width;
+                        }
+                        return x(d.sprint);
+                    }).y0(function (d) {
+                        return y0(d.y0);
+                    })
+                    .y1(function (d) {
+                        return y0(d.y0 + d.y);
+                    });
+            }
 
-            var stack = d3.layout.stack()
-                .values(function (d) {
-                    return d.values;
-                });
+            function createStack() {
+                return d3.layout.stack()
+                    .values(function (d) {
+                        return d.values;
+                    });
+            }
 
+            function scopeStack(stack, data, yAccessor) {
+                return stack([{
+                    values: data.map(function (d) {
+                        return {
+                            index: d.index,
+                            sprint: d.sprint,
+                            y: yAccessor(d)
+                        };
+                    })
+                }]);
+            }
 
-            var data_ = data.map(function (d) {
-                return d;
+            function renderScopeStack(emptyStack, stack, clazz) {
+                var scope = svg.selectAll("." + clazz).data(data).enter();
+
+                scope.append("path")
+                    .data(emptyStack)
+                    .attr("class", clazz)
+                    .attr("d", function (d) {
+                        return area(d.values);
+                    });
+
+                d3.selectAll("." + clazz)
+                    .data(stack)
+                    .transition()
+                    .duration(2000)
+                    .attr("d", function (d) {
+                        return area(d.values);
+                    });
+            }
+
+            var area = createArea();
+            var stack = createStack();
+
+            var emptyStack = scopeStack(stack, data, function (d) {
+                return 0;
             });
 
-            var data0 = stack([{
-                values: data_.map(function (d) {
-                    return {
-                        index: d.index,
-                        sprint: d.sprint,
-                        y: 0
-                    };
-                })
-            }]);
+            var pointsStack = scopeStack(stack, data, function (d) {
+                return d.points;
+            });
 
-            var data1 = stack([{
-                values: data_.map(function (d) {
-                    return {
-                        index: d.index,
-                        sprint: d.sprint,
-                        y: d.points
-                    };
-                })
-            }]);
+            var doneStack = scopeStack(stack, data, function (d) {
+                return d.totalDone;
+            });
 
-
-            var scope = svg.selectAll(".scope").data(data).enter();
-
-            scope.append("path")
-                .data(data0)
-                .attr("class", "scope")
-                .attr("d", function (d) {
-                    return area(d.values);
-                });
-
-            d3.selectAll(".scope")
-                .data(data1)
-                .transition()
-                .duration(2000)
-                .attr("d", function (d) {
-                    return area(d.values);
-                });
+            renderScopeStack(emptyStack, pointsStack, "scopePoints");
+            renderScopeStack(emptyStack, doneStack, "scopeDone");
         }
 
         render();
@@ -280,18 +290,23 @@
     function data(project) {
         var remaining = project.points;
         var points = project.points;
+        var totalDone = 0;
 
         var data = project.sprints.map(function (sprint, i) {
-            remaining -= sprint.done;
-            points += sprint.added ? sprint.added : 0;
-            points -= sprint.removed ? sprint.removed : 0;
+            var added = sprint.added ? sprint.added : 0;
+            var removed = sprint.removed ? sprint.removed : 0;
+
+            remaining = remaining - sprint.done + added - removed;
+            points = points + added - removed;
+            totalDone += sprint.done;
 
             return {
                 index: i,
                 sprint: 'Sprint ' + (i + 1),
                 done: sprint.done,
                 remaining: remaining,
-                points: points
+                points: points,
+                totalDone: totalDone
             };
         });
 
@@ -312,7 +327,8 @@
                 done: 0,
                 remaining: remaining,
                 points: points,
-                projection: true
+                projection: true,
+                totalDone: totalDone
             });
 
         } while (remaining != 0);
