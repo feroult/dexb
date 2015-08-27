@@ -378,9 +378,9 @@
 
     function defineChartDimentions(width, height) {
         var margin = {
-            top: 80,
+            top: 40,
             right: 80,
-            bottom: 80,
+            bottom: 40,
             left: 80
         };
 
@@ -394,13 +394,13 @@
     function createChartSVG(dim) {
         return d3.select("#product-chart").append("svg")
             .attr("width", dim.width + dim.margin.left + dim.margin.right)
-            .attr("width", "100%")
+            .attr("class", "chart")
             .attr("height", dim.height + dim.margin.top + dim.margin.bottom)
             .append("g")
             .attr("class", "graph")
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(1400, 500);
+    productChart(1400, 300);
 
 })();
