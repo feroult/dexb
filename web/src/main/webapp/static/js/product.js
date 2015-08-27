@@ -17,8 +17,8 @@
 
             renderScopeArea(x, y0);
             renderDoneBars(x, y1);
-            renderProductBurnLines(x, y0);
             rederProjectLimit(x, y0);
+            renderProductBurnLines(x, y0);
         }
 
         function createX() {
@@ -159,7 +159,12 @@
             var dots = svg.selectAll(".dot").data(data_).enter();
 
             dots.append("circle")
-                .attr("class", "circle")
+                .attr("class", function (d) {
+                    if (d.projection) {
+                        return "circle projection";
+                    }
+                    return "circle";
+                })
                 .attr("r", 3)
                 .attr("cx", function (d) {
                     if (!d.sprint) {
@@ -266,6 +271,12 @@
                     });
             }
 
+            function filterOut(data) {
+                return data.filter(function (d) {
+                    return d.totalOut != undefined;
+                });
+            }
+
             var area = createArea();
             var stack = createStack();
 
@@ -281,13 +292,18 @@
                 return d.totalDone;
             });
 
-            var outStack = scopeStack(stack, data, function (d) {
+            var outData = filterOut(data);
+            var outEmptyStack = scopeStack(stack, outData, function (d) {
+                return 0;
+            });
+
+            var outStack = scopeStack(stack, outData, function (d) {
                 return d.totalOut;
             });
 
             renderScopeStack(emptyStack, pointsStack, "scopePoints");
             renderScopeStack(emptyStack, doneStack, "scopeDone");
-            renderScopeStack(emptyStack, outStack, "scopeOut");
+            renderScopeStack(outEmptyStack, outStack, "scopeOut");
         }
 
         function rederProjectLimit(x, y0) {
@@ -300,9 +316,9 @@
 
             line.append("line")
                 .attr("class", "limit")
-                .attr("x1", x(lastSprint))
+                .attr("x1", x(lastSprint) - 1)
                 .attr("y1", y0(0))
-                .attr("x2", x(lastSprint))
+                .attr("x2", x(lastSprint) - 1)
                 .attr("y2", y0(0))
                 .transition()
                 .ease("sin")
@@ -337,7 +353,7 @@
                 remaining: remaining,
                 points: points,
                 totalDone: totalDone,
-                totalOut: 0
+                totalOut: undefined
             };
         });
 
@@ -368,7 +384,7 @@
                 points: points,
                 projection: true,
                 totalDone: totalDone,
-                totalOut: totalOut
+                totalOut: (data.length > project.lastSprint - 2) ? totalOut : undefined
             });
 
         } while (remaining != 0);

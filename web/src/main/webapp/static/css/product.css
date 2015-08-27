@@ -43,7 +43,7 @@ div.chart {
 .bar:hover {
     fill: #3cc76a;
     stroke-width: 1px;
-    stroke-dasharray: 4, 4;    
+    stroke-dasharray: 4, 4;
     stroke: green;
     cursor: pointer;
 }
@@ -55,13 +55,16 @@ div.chart {
 }
 
 .line.projection {
-    stroke-dasharray: 10, 10;
+    stroke: gray;
+    stroke-opacity: 0.5;
+    /*    stroke-dasharray: 4, 4;*/
 }
 
 line.limit {
     stroke: red;
     stroke-opacity: 0.2;
-    stroke-width: 8px;
+    stroke-width: 2px;
+    stroke-dasharray: 4, 4;
 }
 
 .circle {
@@ -69,6 +72,11 @@ line.limit {
     stroke: white;
     stroke-opacity: 0;
     stroke-width: 0px;
+}
+
+.circle.projection {
+    fill: gray;
+    opacity: 0.5;
 }
 
 .scopePoints {
