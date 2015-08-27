@@ -40,6 +40,14 @@ div.chart {
     fill: #1db34f;
 }
 
+.bar:hover {
+    fill: #3cc76a;
+    stroke-width: 1px;
+    stroke-dasharray: 4, 4;    
+    stroke: green;
+    cursor: pointer;
+}
+
 .line {
     stroke: #1d7fb3;
     stroke-width: 2px;
@@ -68,19 +76,35 @@ line.limit {
     fill-opacity: 0.2;
 }
 
-.scopeDone {
-    fill: green;
-    fill-opacity: 0.2;
+.scopePoints:hover {
+    stroke: steelblue;
+    stroke-width: 1px;
+    stroke-dasharray: 4, 4;
+    cursor: pointer;
 }
 
-.scopeProjection {
-    fill: green;
+.scopeDone {
     fill-opacity: 0.2;
+    fill: green;
+}
+
+.scopeDone:hover {
+    stroke: green;
+    stroke-width: 1px;
+    stroke-dasharray: 4, 4;
+    cursor: pointer;
 }
 
 .scopeOut {
     fill: red;
     fill-opacity: 0.2;
+}
+
+.scopeOut:hover {
+    stroke: red;
+    stroke-width: 1px;
+    stroke-dasharray: 4, 4;
+    cursor: pointer;
 }
 
 .x.axis path {
