@@ -64,6 +64,11 @@ line.limit {
     fill-opacity: 0.2;
 }
 
+.scopeProjection {
+    fill: green;
+    fill-opacity: 0.2;
+}
+
 .scopeOut {
     fill: red;
     fill-opacity: 0.2;

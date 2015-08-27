@@ -177,6 +177,7 @@
                     return y0(d.remaining);
                 });
 
+
             return lines;
         }
 
@@ -210,7 +211,6 @@
         function renderScopeArea(x, y0) {
             function createArea() {
                 return d3.svg.area()
-                    //.interpolate("cardinal")
                     .x(function (d) {
                         if (d.index == 0) {
                             return 0;
@@ -285,7 +285,6 @@
                 return d.totalOut;
             });
 
-
             renderScopeStack(emptyStack, pointsStack, "scopePoints");
             renderScopeStack(emptyStack, doneStack, "scopeDone");
             renderScopeStack(emptyStack, outStack, "scopeOut");
@@ -346,11 +345,9 @@
             return d.done;
         });
 
-
         do {
-            if (data.length > (project.lastSprint) && totalOut == 0) {
-                totalOut = remaining + mean;
-                console.log('t', totalOut);
+            if (data.length > (project.lastSprint - 1) && totalOut == 0) {
+                totalOut = remaining;
             }
 
 
@@ -359,6 +356,9 @@
                 remaining = 0;
             }
 
+            if (data.length < project.lastSprint) {
+                totalDone += mean;
+            }
 
             data.push({
                 index: data.length,
@@ -368,7 +368,7 @@
                 points: points,
                 projection: true,
                 totalDone: totalDone,
-                totalOut
+                totalOut: totalOut
             });
 
         } while (remaining != 0);
