@@ -21,6 +21,8 @@ public class Project {
 
 	private Integer points;
 
+	private Integer lastSprint;
+
 	@Json
 	private List<Sprint> sprints;
 
@@ -54,6 +56,14 @@ public class Project {
 
 	public void setPoints(Integer points) {
 		this.points = points;
+	}
+
+	public Integer getLastSprint() {
+		return lastSprint;
+	}
+
+	public void setLastSprint(Integer lastSprint) {
+		this.lastSprint = lastSprint;
 	}
 
 	public List<Sprint> getSprints() {

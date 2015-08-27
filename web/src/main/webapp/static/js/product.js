@@ -18,6 +18,7 @@
             renderScopeArea(x, y0);
             renderDoneBars(x, y1);
             renderProductBurnLines(x, y0);
+            rederProjectLimit(x, y0);
         }
 
         function createX() {
@@ -50,7 +51,7 @@
 
             var yAxisLeft = d3.svg.axis()
                 .scale(y0)
-                .ticks(4)
+                .ticks(8)
                 .outerTickSize(0)
                 .orient("left");
 
@@ -288,6 +289,27 @@
             renderScopeStack(emptyStack, outStack, "scopeOut");
         }
 
+        function rederProjectLimit(x, y0) {
+            if(project.lastSprint == data.length) {
+                return;
+            }
+            
+            var line = svg.selectAll(".limit").data([1]).enter();
+            var lastSprint = data[project.lastSprint].sprint;
+
+            line.append("line")
+                .attr("class", "limit")
+                .attr("x1", x(lastSprint))
+                .attr("y1", y0(0))
+                .attr("x2", x(lastSprint))
+                .attr("y2", y0(0))
+                .transition()
+                .ease("sin")
+                .duration(2000)
+                .attr("y2", 0);
+        }
+
+
         render();
     }
 
@@ -329,7 +351,7 @@
                 remaining = 0;
             }
 
-            if (data.length > 8) {
+            if (data.length > (project.lastSprint)) {
                 totalOut += mean;
             }
 

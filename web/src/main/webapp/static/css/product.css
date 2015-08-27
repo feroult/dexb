@@ -16,8 +16,6 @@
 }
 
 .axis path {
-    /*    fill: none;*/
-    
     stroke-width: 2px;
 }
 
@@ -41,6 +39,12 @@
 
 .line.projection {
     stroke-dasharray: 10, 10;
+}
+
+line.limit {
+    stroke: red;
+    stroke-opacity: 0.2;
+    stroke-width: 8px;
 }
 
 .circle {
