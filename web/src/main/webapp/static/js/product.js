@@ -210,6 +210,7 @@
         function renderScopeArea(x, y0) {
             function createArea() {
                 return d3.svg.area()
+                    //.interpolate("cardinal")
                     .x(function (d) {
                         if (d.index == 0) {
                             return 0;
@@ -228,6 +229,7 @@
 
             function createStack() {
                 return d3.layout.stack()
+                    .offset("zero")
                     .values(function (d) {
                         return d.values;
                     });
@@ -290,10 +292,10 @@
         }
 
         function rederProjectLimit(x, y0) {
-            if(project.lastSprint == data.length) {
+            if (project.lastSprint == data.length) {
                 return;
             }
-            
+
             var line = svg.selectAll(".limit").data([1]).enter();
             var lastSprint = data[project.lastSprint].sprint;
 
@@ -346,14 +348,17 @@
 
 
         do {
+            if (data.length > (project.lastSprint) && totalOut == 0) {
+                totalOut = remaining + mean;
+                console.log('t', totalOut);
+            }
+
+
             remaining -= mean;
             if (remaining < 0) {
                 remaining = 0;
             }
 
-            if (data.length > (project.lastSprint)) {
-                totalOut += mean;
-            }
 
             data.push({
                 index: data.length,
