@@ -1,46 +1,37 @@
-div.outter {
-    width: 100%;
-}
-
-div.chart {
-    display: table;
-    margin: 0 auto;
-}
-
-.chart text {
+.burnify text {
     fill: #aaa;
     font: 10px sans-serif;
 }
 
-.y.axis line {
+.burnify .y.axis line {
     stroke-width: 1px;
 }
 
-.y.axisLeft line {
+.burnify .y.axisLeft line {
     stroke: green;
 }
 
-.y.axisRight line {
+.burnify .y.axisRight line {
     stroke: steelblue;
 }
 
-.axis path {
+.burnify .axis path {
     stroke-width: 2px;
 }
 
-.axisLeft path {
+.burnify .axisLeft path {
     stroke: #1d7fb3;
 }
 
-.axisRight path {
+.burnify .axisRight path {
     stroke: #1db34f;
 }
 
-.bar {
+.burnify .bar {
     fill: #1db34f;
 }
 
-.bar:hover {
+.burnify .bar:hover {
     fill: #3cc76a;
     stroke-width: 1px;
     stroke-dasharray: 4, 4;
@@ -48,100 +39,100 @@ div.chart {
     cursor: pointer;
 }
 
-.line {
+.burnify .line {
     stroke: #1d7fb3;
     stroke-width: 2px;
     stroke-linecap: "butt";
 }
 
-.line.projection {
+.burnify .line.projection {
     stroke: gray;
     stroke-opacity: 0.5;
 }
 
-line.limit {
+.burnify line.limit {
     stroke: red;
     stroke-opacity: 0.4;
     stroke-width: 2px;
     stroke-dasharray: 4, 4;
 }
 
-text.limit {
+.burnify text.limit {
     text-anchor: middle;
 }
 
-line.mvp {
+.burnify line.mvp {
     stroke: green;
     stroke-opacity: 0.4;
     stroke-width: 2px;
     stroke-dasharray: 4, 4;
 }
 
-text.mvp {
+.burnify text.mvp {
     text-anchor: middle;
 }
 
-.circle {
+.burnify .circle {
     fill: #1d7fb3;
     stroke: white;
     stroke-opacity: 0;
     stroke-width: 0px;
 }
 
-.circle.projection {
+.burnify .circle.projection {
     fill: gray;
     opacity: 0.5;
 }
 
-.scopePoints {
+.burnify .scopePoints {
     fill: steelblue;
     fill-opacity: 0.2;
 }
 
-.scopePoints:hover {
+.burnify .scopePoints:hover {
     stroke: steelblue;
     stroke-width: 1px;
     stroke-dasharray: 4, 4;
     cursor: pointer;
 }
 
-.scopeDone {
+.burnify .scopeDone {
     fill-opacity: 0.2;
     fill: green;
 }
 
-.scopeDone:hover {
+.burnify .scopeDone:hover {
     stroke: green;
     stroke-width: 1px;
     stroke-dasharray: 4, 4;
     cursor: pointer;
 }
 
-.scopeOut {
+.burnify .scopeOut {
     fill: red;
     fill-opacity: 0.2;
 }
 
-.scopeOut:hover {
+.burnify .scopeOut:hover {
     stroke: red;
     stroke-width: 1px;
     stroke-dasharray: 4, 4;
     cursor: pointer;
 }
 
-.x.axis path {
+.burnify .x.axis path {
     display: none;
     stroke: steelblue;
 }
 
-g.x.axis {
+.burnify g.x.axis {
     fill: white;
 }
 
-.x.axis line {
+.burnify .x.axis line {
     /*    stroke: #ddd;*/
 }
 
-.x.axis text {
+.burnify .x.axis text {
     fill: #aaa;
 }

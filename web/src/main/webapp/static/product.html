@@ -12,13 +12,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 
     <script src="/js/lib/yawp.js"></script>
+    <script src="/js/product.js"></script>
+
+    <style type="text/css">
+        div.outter {
+            width: 100%;
+        }
+        
+        div.inner {
+            display: table;
+            margin: 0 auto;
+        }
+    </style>
+
 </head>
 
 <body>
     <div class="outter">
-        <div id="product-chart" class="chart" />
+        <div id="product-chart" class="inner" />
     </div>
-    <script src="/js/product.js"></script>
+
+    <script>
+        yawp('/projects').first(function (project) {
+            $("#product-chart").burnify(project, 1400, 400);
+        });
+    </script>
+
 </body>
 
 </html>

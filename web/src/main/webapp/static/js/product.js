@@ -1,12 +1,9 @@
 (function () {
 
-    function productChart(width, height) {
+    function productChart(element, project, width, height) {
         var dim = defineChartDimentions(width, height);
-        var svg = createChartSVG(dim);
-
-        yawp('/projects').first(function (project) {
-            renderChart(dim, svg, project, prepareData(project));
-        });
+        var svg = createChartSVG(element, dim);
+        renderChart(dim, svg, project, prepareData(project));
     }
 
     function renderChart(dim, svg, project, data) {
@@ -437,8 +434,10 @@
         }
     }
 
-    function createChartSVG(dim) {
-        return d3.select("#product-chart").append("svg")
+    function createChartSVG(element, dim) {
+        return d3.select(element)
+            .classed("burnify", true)
+            .append("svg")
             .attr("width", dim.width + dim.margin.left + dim.margin.right)
             .attr("class", "chart")
             .attr("height", dim.height + dim.margin.top + dim.margin.bottom)
@@ -447,6 +446,8 @@
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(800, 300);
+    $.fn.burnify = function (project, width, height) {
+        productChart(this.get(0), project, width, height);
+    };
 
 })();
