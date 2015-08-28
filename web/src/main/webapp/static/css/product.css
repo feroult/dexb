@@ -117,6 +117,15 @@ line.limit {
 
 .x.axis path {
     display: none;
+    stroke: steelblue;
+}
+
+g.x.axis {
+    fill: white;
+}
+
+.x.axis line {
+    /*    stroke: #ddd;*/
 }
 
 .x.axis text {

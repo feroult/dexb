@@ -29,13 +29,14 @@
                 }));
 
             var xAxis = d3.svg.axis()
-                .tickSize(0)
+                .tickSize(4)
+                .outerTickSize(0)
                 .scale(x)
                 .orient("bottom");
 
             svg.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + (dim.height + 6) + ")")
+                .attr("transform", "translate(0," + (dim.height + 1) + ")")
                 .call(xAxis);
 
             return x;
@@ -71,16 +72,18 @@
 
             var y1 = d3.scale.linear().domain([min, max]).range([dim.height, 0]);
 
-            var yAxisRight = d3.svg.axis()
-                .scale(y1)
-                .ticks(8)
-                .outerTickSize(0)
-                .orient("right");
+            function dontcall() {
+                var yAxisRight = d3.svg.axis()
+                    .scale(y1)
+                    .ticks(8)
+                    .outerTickSize(0)
+                    .orient("right");
 
-            svg.append("g")
-                .attr("class", "y axis axisRight")
-                .attr("transform", "translate(" + (dim.width) + ",0)")
-                .call(yAxisRight);
+                svg.append("g")
+                    .attr("class", "y axis axisRight")
+                    .attr("transform", "translate(" + (dim.width) + ",0)")
+                    .call(yAxisRight);
+            }
 
             return y1;
         }
@@ -348,7 +351,7 @@
 
             return {
                 index: i,
-                sprint: 'Sprint ' + (i + 1),
+                sprint: '' + (i + 1),
                 done: sprint.done,
                 remaining: remaining,
                 points: points,
@@ -378,7 +381,7 @@
 
             data.push({
                 index: data.length,
-                sprint: 'Sprint ' + (data.length + 1),
+                sprint: '' + (data.length + 1),
                 done: 0,
                 remaining: remaining,
                 points: points,
@@ -396,7 +399,7 @@
         var margin = {
             top: 40,
             right: 80,
-            bottom: 40,
+            bottom: 20,
             left: 80
         };
 
@@ -417,6 +420,6 @@
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(1400, 300);
+    productChart(900, 300);
 
 })();
