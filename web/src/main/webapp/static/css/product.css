@@ -57,12 +57,11 @@ div.chart {
 .line.projection {
     stroke: gray;
     stroke-opacity: 0.5;
-    /*    stroke-dasharray: 4, 4;*/
 }
 
 line.limit {
     stroke: red;
-    stroke-opacity: 0.8;
+    stroke-opacity: 0.4;
     stroke-width: 2px;
     stroke-dasharray: 4, 4;
 }
@@ -73,7 +72,7 @@ text.limit {
 
 line.mvp {
     stroke: green;
-    stroke-opacity: 0.8;
+    stroke-opacity: 0.4;
     stroke-width: 2px;
     stroke-dasharray: 4, 4;
 }

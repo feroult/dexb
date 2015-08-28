@@ -20,7 +20,7 @@
         }, {
             planned: 14,
             done: 8,
-            added: 2
+            added: 12
         }, {
             planned: 14,
             done: 8,

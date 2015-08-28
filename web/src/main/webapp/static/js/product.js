@@ -316,11 +316,12 @@
             }
 
             var lastSprint = data[project.lastSprint].sprint;
+            var x_ = x(lastSprint) - x.rangeBand()/5;            
             svg.append("line")
                 .attr("class", "limit")
-                .attr("x1", x(lastSprint) - 1)
+                .attr("x1", x_)
                 .attr("y1", y0(0))
-                .attr("x2", x(lastSprint) - 1)
+                .attr("x2", x_)
                 .attr("y2", y0(0))
                 .transition()
                 .ease("sin")
@@ -328,7 +329,7 @@
                 .attr("y2", 0);
 
             svg.append("text")
-                .attr("x", x(lastSprint) - 1)
+                .attr("x", x_)
                 .attr("y", -5)
                 .text("LIMIT")
                 .attr("class", "limit");
@@ -336,11 +337,13 @@
 
         function renderProjectMVP(x, y0) {
             var mvpSprint = data[10].sprint;
+            var x_ = x(mvpSprint) - x.rangeBand()/5;
+            
             svg.append("line")
                 .attr("class", "mvp")
-                .attr("x1", x(mvpSprint) - 1)
+                .attr("x1", x_)
                 .attr("y1", y0(0))
-                .attr("x2", x(mvpSprint) - 1)
+                .attr("x2", x_)
                 .attr("y2", y0(0))
                 .transition()
                 .ease("sin")
@@ -348,7 +351,7 @@
                 .attr("y2", 0);
 
             svg.append("text")
-                .attr("x", x(mvpSprint) - 1)
+                .attr("x", x_)
                 .attr("y", -5)
                 .text("MVP")
                 .attr("class", "mvp");
