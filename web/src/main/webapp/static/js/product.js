@@ -420,6 +420,6 @@
             .attr("transform", "translate(" + dim.margin.left + "," + dim.margin.top + ")");
     }
 
-    productChart(900, 300);
+    productChart(800, 300);
 
 })();
