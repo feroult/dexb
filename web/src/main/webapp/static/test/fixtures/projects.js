@@ -4,6 +4,7 @@
         name: 'Ruby on Rails',
         points: 120,
         lastSprint: 13,
+        mvpSprint: 10,
         sprints: [{
             planned: 10,
             done: 10

@@ -23,6 +23,8 @@ public class Project {
 
 	private Integer lastSprint;
 
+	private Integer mvpSprint;
+
 	@Json
 	private List<Sprint> sprints;
 
@@ -64,6 +66,14 @@ public class Project {
 
 	public void setLastSprint(Integer lastSprint) {
 		this.lastSprint = lastSprint;
+	}
+
+	public Integer getMvpSprint() {
+		return mvpSprint;
+	}
+
+	public void setMvpSprint(Integer mvpSprint) {
+		this.mvpSprint = mvpSprint;
 	}
 
 	public List<Sprint> getSprints() {

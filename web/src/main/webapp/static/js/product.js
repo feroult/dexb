@@ -316,7 +316,7 @@
             }
 
             var lastSprint = data[project.lastSprint].sprint;
-            var x_ = x(lastSprint) - x.rangeBand()/5;            
+            var x_ = x(lastSprint) - x.rangeBand() / 5;
             svg.append("line")
                 .attr("class", "limit")
                 .attr("x1", x_)
@@ -336,9 +336,9 @@
         }
 
         function renderProjectMVP(x, y0) {
-            var mvpSprint = data[10].sprint;
-            var x_ = x(mvpSprint) - x.rangeBand()/5;
-            
+            var mvpSprint = data[project.mvpSprint].sprint;
+            var x_ = x(mvpSprint) - x.rangeBand() / 5;
+
             svg.append("line")
                 .attr("class", "mvp")
                 .attr("x1", x_)
