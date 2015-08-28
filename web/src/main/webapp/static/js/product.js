@@ -17,7 +17,8 @@
 
             renderScopeArea(x, y0);
             renderDoneBars(x, y1);
-            rederProjectLimit(x, y0);
+            renderProjectLimit(x, y0);
+            renderProjectMVP(x, y0);
             renderProductBurnLines(x, y0);
         }
 
@@ -309,15 +310,13 @@
             renderScopeStack(outEmptyStack, outStack, "scopeOut");
         }
 
-        function rederProjectLimit(x, y0) {
+        function renderProjectLimit(x, y0) {
             if (project.lastSprint == data.length) {
                 return;
             }
 
-            var line = svg.selectAll(".limit").data([1]).enter();
             var lastSprint = data[project.lastSprint].sprint;
-
-            line.append("line")
+            svg.append("line")
                 .attr("class", "limit")
                 .attr("x1", x(lastSprint) - 1)
                 .attr("y1", y0(0))
@@ -327,8 +326,33 @@
                 .ease("sin")
                 .duration(2000)
                 .attr("y2", 0);
+
+            svg.append("text")
+                .attr("x", x(lastSprint) - 1)
+                .attr("y", -5)
+                .text("LIMIT")
+                .attr("class", "limit");
         }
 
+        function renderProjectMVP(x, y0) {
+            var mvpSprint = data[10].sprint;
+            svg.append("line")
+                .attr("class", "mvp")
+                .attr("x1", x(mvpSprint) - 1)
+                .attr("y1", y0(0))
+                .attr("x2", x(mvpSprint) - 1)
+                .attr("y2", y0(0))
+                .transition()
+                .ease("sin")
+                .duration(2000)
+                .attr("y2", 0);
+
+            svg.append("text")
+                .attr("x", x(mvpSprint) - 1)
+                .attr("y", -5)
+                .text("MVP")
+                .attr("class", "mvp");
+        }
 
         render();
     }

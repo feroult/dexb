@@ -24,7 +24,8 @@
         }, {
             planned: 14,
             done: 8,
-            added: 2
+            added: 2,
+            removed: 20
         }, {
             planned: 12,
             done: 4,

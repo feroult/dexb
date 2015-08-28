@@ -62,9 +62,24 @@ div.chart {
 
 line.limit {
     stroke: red;
-    stroke-opacity: 0.2;
+    stroke-opacity: 0.8;
     stroke-width: 2px;
     stroke-dasharray: 4, 4;
+}
+
+text.limit {
+    text-anchor: middle;
+}
+
+line.mvp {
+    stroke: green;
+    stroke-opacity: 0.8;
+    stroke-width: 2px;
+    stroke-dasharray: 4, 4;
+}
+
+text.mvp {
+    text-anchor: middle;
 }
 
 .circle {
